@@ -51,7 +51,7 @@ async def multimodal_demo(request: Request):
 def handle_text_message(event):
     # ⏳ Show loading animation before processing
     user_id = event.source.user_id
-    display_loading_animation(user_id, cfg.LINE_CHANNEL_ACCESS_TOKEN, duration=5)
+    display_loading_animation(user_id, cfg.LINE_CHANNEL_ACCESS_TOKEN, duration=10)
 
     # session id
     current_time = datetime.now()
@@ -82,7 +82,7 @@ def send_message(event, message):
     line_bot_api.reply_message(event.reply_token, TextSendMessage(text=message))
 
 # function for displaying loading animation
-def display_loading_animation(user_id: str, access_token: str, duration: int = 5):
+def display_loading_animation(user_id: str, access_token: str, duration: int = 10):
     url = "https://api.line.me/v2/bot/chat/loading/start"
     headers = {
         "Content-Type": "application/json",

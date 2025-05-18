@@ -96,7 +96,7 @@ def handle_voice_message(event):
 def handle_text_message(event):
     # ⏳ Show loading animation before processing
     user_id = event.source.user_id
-    display_loading_animation(user_id, cfg.LINE_CHANNEL_ACCESS_TOKEN, duration=5)
+    display_loading_animation(user_id, cfg.LINE_CHANNEL_ACCESS_TOKEN, duration=10)
 
     user_input = event.message.text.strip()
     command_list = [
@@ -375,7 +375,7 @@ def translate_xiaofan(text, direction):
     return response.json()['translated_text']  # or response.text if you prefer raw
 
 # function for displaying loading animation
-def display_loading_animation(user_id: str, access_token: str, duration: int = 5):
+def display_loading_animation(user_id: str, access_token: str, duration: int = 10):
     url = "https://api.line.me/v2/bot/chat/loading/start"
     headers = {
         "Content-Type": "application/json",
