@@ -10,6 +10,8 @@ from aift.multimodal import textqa
 from datetime import datetime
 
 from app.configs import Configs
+import requests
+
 
 router = APIRouter(tags=["Main"], prefix="/message")
 
@@ -47,6 +49,10 @@ async def multimodal_demo(request: Request):
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
+    # ⏳ Show loading animation before processing
+    user_id = event.source.user_id
+    display_loading_animation(user_id, cfg.LINE_CHANNEL_ACCESS_TOKEN, duration=5)
+
     # session id
     current_time = datetime.now()
     # extract day, month, hour, and minute
@@ -74,3 +80,20 @@ def echo(event):
 # function for sending message
 def send_message(event, message):
     line_bot_api.reply_message(event.reply_token, TextSendMessage(text=message))
+
+# function for displaying loading animation
+def display_loading_animation(user_id: str, access_token: str, duration: int = 5):
+    url = "https://api.line.me/v2/bot/chat/loading/start"
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {access_token}"
+    }
+    body = {
+        "chatId": user_id,
+        "loadingSeconds": duration
+    }
+    try:
+        response = requests.post(url, headers=headers, json=body)
+        print(f"Loading animation status: {response.status_code}")
+    except Exception as e:
+        print(f"Failed to send loading animation: {e}")

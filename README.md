@@ -1,5 +1,7 @@
 # AIFORTHAI LINEBOT WORKSHOP
 
+# Pathumma LLM by NECTEC
+
 ## Manual installation
 
 ```

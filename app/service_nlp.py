@@ -70,6 +70,10 @@ async def nlp_demo(request: Request):
 
 @handler.add(MessageEvent, message=AudioMessage)
 def handle_voice_message(event):
+    # ⏳ Show loading animation before processing
+    user_id = event.source.user_id
+    display_loading_animation(user_id, cfg.LINE_CHANNEL_ACCESS_TOKEN, duration=5)
+
     # #14. SPEECH TO TEXT (Partii)
     # Get the audio file from LINE
     message_content = line_bot_api.get_message_content(event.message.id)
@@ -90,6 +94,10 @@ def handle_voice_message(event):
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
+    # ⏳ Show loading animation before processing
+    user_id = event.source.user_id
+    display_loading_animation(user_id, cfg.LINE_CHANNEL_ACCESS_TOKEN, duration=5)
+
     user_input = event.message.text.strip()
     command_list = [
         "#trexplus","#lexto", "#trex++", "#tner","#g2p", "#soundex","#thaiwordsim", "#wordapprox", 
@@ -366,5 +374,22 @@ def translate_xiaofan(text, direction):
     response = requests.post(url, headers=headers, data=payload)
     return response.json()['translated_text']  # or response.text if you prefer raw
 
-
+# function for displaying loading animation
+def display_loading_animation(user_id: str, access_token: str, duration: int = 5):
+    url = "https://api.line.me/v2/bot/chat/loading/start"
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {access_token}"
+    }
+    body = {
+        "chatId": user_id,
+        "loadingSeconds": duration
+    }
+    try:
+        response = requests.post(url, headers=headers, json=body)
+        print(f"Loading animation status: {response.status_code}")
+    except Exception as e:
+        print(f"Failed to send loading animation: {e}")
+        
+        
 # End of  file

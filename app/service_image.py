@@ -59,6 +59,10 @@ async def image_demo(request: Request):
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
+    # ⏳ Show loading animation before processing
+    user_id = event.source.user_id
+    display_loading_animation(user_id, cfg.LINE_CHANNEL_ACCESS_TOKEN, duration=5)
+    
     # session id
     current_time = datetime.now()
     # extract day, month, hour, and minute
@@ -78,6 +82,10 @@ def handle_text_message(event):
 
 @handler.add(MessageEvent, message=ImageMessage)
 def handle_image_message(event):
+    # ⏳ Show loading animation before processing
+    user_id = event.source.user_id
+    display_loading_animation(user_id, cfg.LINE_CHANNEL_ACCESS_TOKEN, duration=5)
+    
     message_id = event.message.id
     image_content = line_bot_api.get_message_content(message_id)
 
@@ -168,3 +176,20 @@ def person_detection(AIFORTHAI_APIKEY, image_dir):
     response        = response.json()['human_img']
     response        = convert_http_to_https(response)
     return response
+
+# function for displaying loading animation
+def display_loading_animation(user_id: str, access_token: str, duration: int = 5):
+    url = "https://api.line.me/v2/bot/chat/loading/start"
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {access_token}"
+    }
+    body = {
+        "chatId": user_id,
+        "loadingSeconds": duration
+    }
+    try:
+        response = requests.post(url, headers=headers, json=body)
+        print(f"Loading animation status: {response.status_code}")
+    except Exception as e:
+        print(f"Failed to send loading animation: {e}")
